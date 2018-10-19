@@ -113,7 +113,7 @@ public class ZenithTeleopPOV_Linear extends LinearOpMode {
 
             // Move both servos to new position.  Assume servos are mirror image of each other.
             armOffset = Range.clip(armOffset, -0.5, 0.5);
-            robot.arm.setPosition(robot.MID_SERVO + armOffset);
+            //robot.arm.setPosition(robot.MID_SERVO + armOffset);
 
             // Send telemetry message to signify robot running;
             telemetry.addData("claw",  "Offset = %.2f", armOffset);

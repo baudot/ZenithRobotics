@@ -57,7 +57,7 @@ public class HardwareZenith
     public DcMotor  frontRightDrive = null;
     public DcMotor  backLeftDrive = null;
     public DcMotor  backRightDrive = null;
-    public Servo arm = null;
+    public DcMotor arm = null;
 
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
@@ -82,6 +82,7 @@ public class HardwareZenith
         frontRightDrive = hwMap.get(DcMotor.class, "front_right_drive");
         backLeftDrive = hwMap.get(DcMotor.class, "back_left_drive");
         backRightDrive = hwMap.get(DcMotor.class, "back_right_drive");
+        arm = hwMap.get(DcMotor.class, "arm");
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
@@ -92,6 +93,7 @@ public class HardwareZenith
         frontRightDrive.setPower(0);
         backLeftDrive.setPower(0);
         backRightDrive.setPower(0);
+        arm.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -99,12 +101,11 @@ public class HardwareZenith
         frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
         //leftClaw  = hwMap.get(Servo.class, "left_hand");
         //leftClaw.setPosition(MID_SERVO);
-        arm = hwMap.get(Servo.class, "arm");
-        arm.setPosition(MID_SERVO);
     }
  }
 
