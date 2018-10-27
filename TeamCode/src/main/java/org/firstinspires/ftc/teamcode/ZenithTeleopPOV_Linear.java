@@ -49,14 +49,13 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Pushbot: Teleop POV", group="Pushbot")
-@Disabled
 public class ZenithTeleopPOV_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareZenith robot           = new HardwareZenith();   // Use a Pushbot's hardware
                                                                // could also use HardwarePushbotMatrix class.
-    double armOffset = 0;                       // Servo mid position
-    final double ARM_SPEED = 0.02 ;                   // sets rate to move servo
+    //double armSpeed = 0;                       // Motor mid position
+    //final double ARM_SPEED = 0.2 ;                   // sets rate to move motor
 
     @Override
     public void runOpMode() {
@@ -89,7 +88,7 @@ public class ZenithTeleopPOV_Linear extends LinearOpMode {
 
             // Combine drive and turn for blended motion.
             left  = drive + turn;
-            right = drive - turn;
+            right = drive -  turn;
 
             // Normalize the values so neither exceed +/- 1.0
             max = Math.max(Math.abs(left), Math.abs(right));
@@ -106,17 +105,19 @@ public class ZenithTeleopPOV_Linear extends LinearOpMode {
             robot.backRightDrive.setPower(right);
 
             // Use gamepad left & right Bumpers to open and close the claw
+            /*
             if (gamepad1.right_bumper)
-                armOffset += ARM_SPEED;
+                armSpeed = ARM_SPEED;
             else if (gamepad1.left_bumper)
-                armOffset -= ARM_SPEED;
+                armSpeed = -ARM_SPEED;
+            else
+                armSpeed = 0;
 
-            // Move both servos to new position.  Assume servos are mirror image of each other.
-            armOffset = Range.clip(armOffset, -0.5, 0.5);
-            //robot.arm.setPosition(robot.MID_SERVO + armOffset);
-
+            // Move arm
+            robot.arm.setPower(armSpeed);
+            */
             // Send telemetry message to signify robot running;
-            telemetry.addData("claw",  "Offset = %.2f", armOffset);
+            //telemetry.addData("arm",  "armSpeed = %.2f", armSpeed);
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
             telemetry.update();
