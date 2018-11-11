@@ -64,7 +64,9 @@ public class ZenithTeleopPOV_Linear extends LinearOpMode {
         double drive;
         double turn;
         double max;
-
+        double armMove;
+        double elbowMove;
+        boolean armReading;
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
@@ -84,8 +86,10 @@ public class ZenithTeleopPOV_Linear extends LinearOpMode {
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
             drive = -gamepad1.left_stick_y;
-            turn  =  gamepad1.right_stick_x;
-
+            turn  =  gamepad1.left_stick_x;
+            armMove = gamepad1.right_stick_x/1.2;
+            elbowMove = gamepad1.right_stick_y;
+            armReading = gamepad1.left_bumper;
             // Combine drive and turn for blended motion.
             left  = drive + turn;
             right = drive - turn;
@@ -96,14 +100,17 @@ public class ZenithTeleopPOV_Linear extends LinearOpMode {
             {
                 left /= max;
                 right /= max;
+                armMove /= max;
+                elbowMove /= max;
             }
-
             // Output the safe vales to the motor drives.
             robot.frontLeftDrive.setPower(left);
             robot.frontRightDrive.setPower(right);
             robot.backLeftDrive.setPower(left);
             robot.backRightDrive.setPower(right);
-
+            robot.arm.setPower(armMove);
+            robot.elbow.setPower(elbowMove);
+            robot.spinner.setPower(1);
             // Use gamepad left & right Bumpers to open and close the claw
            /* if (gamepad1.right_bumper)
                 armOffset += ARM_SPEED;
