@@ -92,7 +92,7 @@ public class ZenithHardCodingAutonomous extends LinearOpMode {
         robot.frontRightDrive.setPower(FORWARD_SPEED);
         robot.backRightDrive.setPower(FORWARD_SPEED);
         runtime.reset();
-        /*while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 0.5 )) {
             telemetry.addData("Path", "Driving to Crater: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -101,7 +101,7 @@ public class ZenithHardCodingAutonomous extends LinearOpMode {
         robot.frontRightDrive.setPower(0.0);
         robot.backRightDrive.setPower(0.0);
         // Step 2:  Spin right for 1.3 seconds
-        */
+        /* turning code
         robot.frontLeftDrive.setPower(TURN_SPEED);
         robot.backLeftDrive.setPower(TURN_SPEED);
         robot.frontRightDrive.setPower(-TURN_SPEED);
@@ -120,6 +120,7 @@ public class ZenithHardCodingAutonomous extends LinearOpMode {
             telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
+        *
         // Step 3:  Drive Backwards for 1 Second
         /*
         robot.leftDrive.setPower(-FORWARD_SPEED);

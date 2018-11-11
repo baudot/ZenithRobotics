@@ -104,13 +104,15 @@ public class ZenithTeleopPOV_Linear extends LinearOpMode {
                 elbowMove /= max;
             }
             // Output the safe vales to the motor drives.
+            if(gamepad1.a)
+                robot.arm.setPower(0.8);
             robot.frontLeftDrive.setPower(left);
             robot.frontRightDrive.setPower(right);
             robot.backLeftDrive.setPower(left);
             robot.backRightDrive.setPower(right);
             robot.arm.setPower(armMove);
             robot.elbow.setPower(elbowMove);
-            robot.spinner.setPower(1);
+            robot.spinner.setPower(1.0);
             // Use gamepad left & right Bumpers to open and close the claw
            /* if (gamepad1.right_bumper)
                 armOffset += ARM_SPEED;
