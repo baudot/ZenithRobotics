@@ -48,14 +48,14 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Pushbot: Teleop POV", group="Pushbot")
+@TeleOp(name="Zenith: Teleop POV", group="Zenith")
 public class ZenithTeleopPOV_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareZenith robot           = new HardwareZenith();   // Use a Pushbot's hardware
                                                                // could also use HardwarePushbotMatrix class.
-    //double armSpeed = 0;                       // Motor mid position
-    //final double ARM_SPEED = 0.2 ;                   // sets rate to move motor
+    //double armOffset = 0;                       // Servo mid position
+    //final double ARM_SPEED = 0.02 ;                   // sets rate to move servo
 
     @Override
     public void runOpMode() {
@@ -64,7 +64,9 @@ public class ZenithTeleopPOV_Linear extends LinearOpMode {
         double drive;
         double turn;
         double max;
-
+        double armMove;
+        double elbowMove;
+        boolean armReading;
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
@@ -84,11 +86,13 @@ public class ZenithTeleopPOV_Linear extends LinearOpMode {
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
             drive = -gamepad1.left_stick_y;
-            turn  =  gamepad1.right_stick_x;
-
+            turn  =  gamepad1.left_stick_x;
+            armMove = gamepad1.right_stick_x/1.2;
+            elbowMove = gamepad1.right_stick_y;
+            armReading = gamepad1.left_bumper;
             // Combine drive and turn for blended motion.
             left  = drive + turn;
-            right = drive -  turn;
+            right = drive - turn;
 
             // Normalize the values so neither exceed +/- 1.0
             max = Math.max(Math.abs(left), Math.abs(right));
@@ -96,28 +100,29 @@ public class ZenithTeleopPOV_Linear extends LinearOpMode {
             {
                 left /= max;
                 right /= max;
+                armMove /= max;
+                elbowMove /= max;
             }
-
             // Output the safe vales to the motor drives.
             robot.frontLeftDrive.setPower(left);
             robot.frontRightDrive.setPower(right);
             robot.backLeftDrive.setPower(left);
             robot.backRightDrive.setPower(right);
-
+            robot.arm.setPower(armMove);
+            robot.elbow.setPower(elbowMove);
+            robot.spinner.setPower(1);
             // Use gamepad left & right Bumpers to open and close the claw
-            /*
-            if (gamepad1.right_bumper)
-                armSpeed = ARM_SPEED;
+           /* if (gamepad1.right_bumper)
+                armOffset += ARM_SPEED;
             else if (gamepad1.left_bumper)
-                armSpeed = -ARM_SPEED;
-            else
-                armSpeed = 0;
-
-            // Move arm
-            robot.arm.setPower(armSpeed);
+                armOffset -= ARM_SPEED;
             */
+            // Move both servos to new position.  Assume servos are mirror image of each other.
+            //armOffset = Range.clip(armOffset, -0.5, 0.5);
+            //robot.arm.setPosition(robot.MID_SERVO + armOffset);
+
             // Send telemetry message to signify robot running;
-            //telemetry.addData("arm",  "armSpeed = %.2f", armSpeed);
+            //telemetry.addData("claw",  "Offset = %.2f", armOffset);
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
             telemetry.update();

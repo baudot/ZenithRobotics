@@ -65,8 +65,8 @@ public class ZenithHardCodingAutonomous extends LinearOpMode {
     private ElapsedTime     runtime = new ElapsedTime();
 
 
-    static final double     FORWARD_SPEED = 0.6;
-    static final double     TURN_SPEED    = 0.5;
+    static final double FORWARD_SPEED = 0.6;
+    static final double TURN_SPEED    = 0.5;
 
     @Override
     public void runOpMode() {
@@ -92,7 +92,7 @@ public class ZenithHardCodingAutonomous extends LinearOpMode {
         robot.frontRightDrive.setPower(FORWARD_SPEED);
         robot.backRightDrive.setPower(FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+        /*while (opModeIsActive() && (runtime.seconds() < 1.0)) {
             telemetry.addData("Path", "Driving to Crater: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -101,15 +101,25 @@ public class ZenithHardCodingAutonomous extends LinearOpMode {
         robot.frontRightDrive.setPower(0.0);
         robot.backRightDrive.setPower(0.0);
         // Step 2:  Spin right for 1.3 seconds
-        /*
-        robot.leftDrive.setPower(TURN_SPEED);
-        robot.rightDrive.setPower(-TURN_SPEED);
+        */
+        robot.frontLeftDrive.setPower(TURN_SPEED);
+        robot.backLeftDrive.setPower(TURN_SPEED);
+        robot.frontRightDrive.setPower(-TURN_SPEED);
+        robot.backRightDrive.setPower(-TURN_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.3)) {
+        while (opModeIsActive() && (runtime.seconds() < 0.575)) {
             telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-        */
+        robot.frontLeftDrive.setPower(-TURN_SPEED);
+        robot.backLeftDrive.setPower(-TURN_SPEED);
+        robot.frontRightDrive.setPower(TURN_SPEED);
+        robot.backRightDrive.setPower(TURN_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 0.05)) {
+            telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
         // Step 3:  Drive Backwards for 1 Second
         /*
         robot.leftDrive.setPower(-FORWARD_SPEED);
@@ -122,6 +132,6 @@ public class ZenithHardCodingAutonomous extends LinearOpMode {
         */
         telemetry.addData("Path", "Complete");
         telemetry.update();
-        sleep(1000);
+        //sleep(1000);
     }
 }
