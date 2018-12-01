@@ -29,8 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.disnodeteam.dogecv.CameraViewDisplay;
-import com.disnodeteam.dogecv.DogeCV;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -53,15 +52,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Servo channel:  Servo to open left claw:  "left_hand"
  * Servo channel:  Servo to open right claw: "right_hand"
  */
-
 public class HardwareZenith
 {
     /* Public OpMode members. */
-    public DcMotor  frontLeftDrive = null;
-    public DcMotor  frontRightDrive = null;
-    public DcMotor  backLeftDrive = null;
-    public DcMotor  backRightDrive = null;
-    // public DcMotor arm = null;
+    public DcMotor frontLeftDrive = null;
+    public DcMotor frontRightDrive = null;
+    public DcMotor backLeftDrive = null;
+    public DcMotor backRightDrive = null;
+    public DcMotor arm = null;
+    public DcMotor elbow = null;
+    public CRServo spinner = null;
 
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
@@ -82,94 +82,36 @@ public class HardwareZenith
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        frontLeftDrive = hwMap.get(DcMotor.class, "front_left_drive");
-        frontRightDrive = hwMap.get(DcMotor.class, "front_right_drive");
-        backLeftDrive = hwMap.get(DcMotor.class, "back_left_drive");
-        backRightDrive = hwMap.get(DcMotor.class, "back_right_drive");
-        //arm = hwMap.get(DcMotor.class, "arm");
+        frontLeftDrive = hwMap.get(DcMotor.class, "frontLeftDrive");
+        frontRightDrive = hwMap.get(DcMotor.class, "frontRightDrive");
+        backLeftDrive = hwMap.get(DcMotor.class, "backLeftDrive");
+        backRightDrive = hwMap.get(DcMotor.class, "backRightDrive");
+        arm = hwMap.get(DcMotor.class, "arm");
+        elbow = hwMap.get(DcMotor.class, "elbow");
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        arm.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
         frontLeftDrive.setPower(0);
         frontRightDrive.setPower(0);
         backLeftDrive.setPower(0);
         backRightDrive.setPower(0);
-        //arm.setPower(0);
+        arm.setPower(0);
+        elbow.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         // Define and initialize ALL installed servos.
-        //leftClaw  = hwMap.get(Servo.class, "left_hand");
+        spinner  = hwMap.get(CRServo.class, "spinner");
         //leftClaw.setPosition(MID_SERVO);
     }
 }
-
-/*
-public class HardwareZenith
-{
-    public DcMotor  frontLeftDrive = null;
-    public DcMotor  frontRightDrive = null;
-    public DcMotor  backLeftDrive = null;
-    public DcMotor  backRightDrive = null;
-    public DcMotor arm = null;
-
-    public static final double MID_SERVO       =  0.5 ;
-    public static final double ARM_UP_POWER    =  0.45 ;
-    public static final double ARM_DOWN_POWER  = -0.45 ;
-
-    HardwareMap hwMap           =  null;
-    private ElapsedTime period  = new ElapsedTime();
-
-    public HardwareZenith(){
-
-    }
-
-    public void init(HardwareMap ahwMap) {
-        // Save reference to Hardware map
-        hwMap = ahwMap;
-
-
-
-
-        // Define and Initialize Motors
-        frontLeftDrive = hwMap.get(DcMotor.class, "front_left_drive");
-        frontRightDrive = hwMap.get(DcMotor.class, "front_right_drive");
-        backLeftDrive = hwMap.get(DcMotor.class, "back_left_drive");
-        backRightDrive = hwMap.get(DcMotor.class, "back_right_drive");
-        // arm = hwMap.get(DcMotor.class, "arm");
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-
-        // Set all motors to zero power
-        frontLeftDrive.setPower(0);
-        frontRightDrive.setPower(0);
-        backLeftDrive.setPower(0);
-        backRightDrive.setPower(0);
-        //arm.setPower(0);
-
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Define and initialize ALL installed servos.
-        //leftClaw  = hwMap.get(Servo.class, "left_hand");
-        //leftClaw.setPosition(MID_SERVO);
-    }
- }
-
-*/

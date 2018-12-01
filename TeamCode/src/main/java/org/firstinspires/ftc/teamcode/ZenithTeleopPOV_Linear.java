@@ -133,4 +133,7 @@ public class ZenithTeleopPOV_Linear extends LinearOpMode {
             sleep(50);
         }
     }
+    public void armEncoder(){
+
+    }
 }
