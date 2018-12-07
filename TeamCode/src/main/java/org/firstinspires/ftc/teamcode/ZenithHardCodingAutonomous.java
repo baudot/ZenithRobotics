@@ -1,34 +1,9 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 
 package org.firstinspires.ftc.teamcode;
 
+import com.disnodeteam.dogecv.CameraViewDisplay;
+import com.disnodeteam.dogecv.DogeCV;
+import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -36,40 +11,49 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
-/**
- * This file illustrates the concept of driving a path based on time.
- * It uses the common Pushbot hardware class to define the drive on the robot.
- * The code is structured as a LinearOpMode
- *
- * The code assumes that you do NOT have encoders on the wheels,
- *   otherwise you would use: PushbotAutoDriveByEncoder;
- *
- *   The desired path in this example is:
- *   - Drive forward for 3 seconds
- *   - Spin right for 1.3 seconds
- *   - Drive Backwards for 1 Second
- *   - Stop and close the claw.
- *
- *  The code is written in a simple form with no optimizations.
- *  However, there are several ways that this type of sequence could be streamlined,
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
 
-@Autonomous(name="ZenithHardAutonomous", group="Zenith")
-public class ZenithHardCodingAutonomous extends LinearOpMode {
+@Autonomous(name="ZenithHardAutonomous_V1", group="Zenith")
+public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
 
     /* Declare OpMode members. */
-    HardwareZenith         robot   = new HardwareZenith();   // Use a Pushbot's hardware
+    HardwareZenith          robot   = new HardwareZenith();   // Use a Pushbot's hardware
     private ElapsedTime     runtime = new ElapsedTime();
 
+    static double     FORWARD_SPEED = 0.2; //initial speeds.
+    static double     TURN_SPEED    = 0.2;
 
-    static final double FORWARD_SPEED = 0.6;
-    static final double TURN_SPEED    = 0.5;
+    public GoldAlignExample a = new GoldAlignExample();
+    public GoldAlignDetector aDetector = a.getDetector();
+
 
     @Override
     public void runOpMode() {
+
+        /////////////////////////
+        telemetry.addData("Status", "DogeCV 2018.0 - Gold Align Example");
+
+        // Set up detector
+        aDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance()); // Initialize it with the app context and camera
+        aDetector.useDefaults(); // Set detector to use default settings
+
+        // Optional tuning
+        aDetector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        aDetector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
+        aDetector.downscale = 0.4; // How much to downscale the input frames
+
+        aDetector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
+        //detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
+        aDetector.maxAreaScorer.weight = 0.005; //
+
+        aDetector.ratioScorer.weight = 5; //
+        aDetector.ratioScorer.perfectRatio = 1.0; // Ratio adjustment
+
+        aDetector.enable(); // Start the detector!
+        /////////////////////////
+
+
+        telemetry.addData("IsAligned" , aDetector.getAligned()); // Is the bot aligned with the gold mineral?
+        telemetry.addData("X Pos" , aDetector.getXPosition()); // Gold X position.
 
         /*
          * Initialize the drive system variables.
@@ -84,15 +68,76 @@ public class ZenithHardCodingAutonomous extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
+///////////////// Autonomous Mode Code /////////// Don't Touch Stuff Above /////////////////////////////////////
+        //Moves forwards
+        this.robotForwards(0.5, 0.4);
+        this.robotHardStop();
 
-        // Step 1:  Drive forward for 3 seconds
+        //Rotates to the left
+        FORWARD_SPEED = 0.50;
+        robot.frontLeftDrive.setPower(-FORWARD_SPEED);
+        robot.backLeftDrive.setPower(-FORWARD_SPEED);
+        robot.frontRightDrive.setPower(FORWARD_SPEED);
+        robot.backRightDrive.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+
+        //Pause briefly --- this might solve the error ---  NEW CODE!!!
+        FORWARD_SPEED = 0.0;
+        robot.frontLeftDrive.setPower(-FORWARD_SPEED);
+        robot.backLeftDrive.setPower(-FORWARD_SPEED);
+        robot.frontRightDrive.setPower(FORWARD_SPEED);
+        robot.backRightDrive.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+
+        //Rotate Right until cube is aligned
+        while(!aDetector.getAligned()){ //while(aDetector.getXPosition() != 175){
+            FORWARD_SPEED = 0.2;
+            robot.frontLeftDrive.setPower(FORWARD_SPEED);
+            robot.backLeftDrive.setPower(FORWARD_SPEED);
+            robot.frontRightDrive.setPower(-FORWARD_SPEED);
+            robot.backRightDrive.setPower(-FORWARD_SPEED);
+            //runtime.reset();
+        }
+
+        //Move towards the cube
+        if (aDetector.getAligned()){ //if (aDetector.getXPosition() == 175){
+            robotForwards(1.5, 0.25);
+            robotHardStop();
+        }
+
+        //Reset
+
+
+        //Next task here...
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
+        sleep(1000);
+
+        //Stop the detector:
+            //aDetector.disable();
+    }
+
+
+    public void robotForwards(double t, double speed){ //t is in sec.
+        FORWARD_SPEED = speed;
         robot.frontLeftDrive.setPower(FORWARD_SPEED);
         robot.backLeftDrive.setPower(FORWARD_SPEED);
         robot.frontRightDrive.setPower(FORWARD_SPEED);
         robot.backRightDrive.setPower(FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 0.5 )) {
+        while (opModeIsActive() && (runtime.seconds() < t)) {
             telemetry.addData("Path", "Driving to Crater: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -100,39 +145,61 @@ public class ZenithHardCodingAutonomous extends LinearOpMode {
         robot.backLeftDrive.setPower(0.0);
         robot.frontRightDrive.setPower(0.0);
         robot.backRightDrive.setPower(0.0);
-        // Step 2:  Spin right for 1.3 seconds
-        /* turning code
-        robot.frontLeftDrive.setPower(TURN_SPEED);
-        robot.backLeftDrive.setPower(TURN_SPEED);
-        robot.frontRightDrive.setPower(-TURN_SPEED);
-        robot.backRightDrive.setPower(-TURN_SPEED);
+    }
+
+    public void robotHardStop(){
+        robot.frontLeftDrive.setPower(-0.1);
+        robot.backLeftDrive.setPower(-0.1);
+        robot.frontRightDrive.setPower(-0.1);
+        robot.backRightDrive.setPower(-0.1);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 0.575)) {
-            telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+        while (opModeIsActive() && (runtime.seconds() < 0.1)) {
+            telemetry.addData("Path", "Driving to Crater: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-        robot.frontLeftDrive.setPower(-TURN_SPEED);
-        robot.backLeftDrive.setPower(-TURN_SPEED);
-        robot.frontRightDrive.setPower(TURN_SPEED);
-        robot.backRightDrive.setPower(TURN_SPEED);
+        robot.frontLeftDrive.setPower(0.0);
+        robot.backLeftDrive.setPower(0.0);
+        robot.frontRightDrive.setPower(0.0);
+        robot.backRightDrive.setPower(0.0);
+    }
+
+    public void robotReverse(double t, double speed){ //t is in sec.
+        FORWARD_SPEED = speed;
+        robot.frontLeftDrive.setPower(-FORWARD_SPEED);
+        robot.backLeftDrive.setPower(-FORWARD_SPEED);
+        robot.frontRightDrive.setPower(-FORWARD_SPEED);
+        robot.backRightDrive.setPower(-FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 0.05)) {
-            telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-        *
-        // Step 3:  Drive Backwards for 1 Second
-        /*
-        robot.leftDrive.setPower(-FORWARD_SPEED);
-        robot.rightDrive.setPower(-FORWARD_SPEED);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+        while (opModeIsActive() && (runtime.seconds() < t)) {
             telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-        */
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        //sleep(1000);
     }
+
+    public void robotRotateRight(double t, double speed){ //t is in sec.
+        FORWARD_SPEED = speed;
+        robot.frontLeftDrive.setPower(FORWARD_SPEED);
+        robot.backLeftDrive.setPower(FORWARD_SPEED);
+        robot.frontRightDrive.setPower(-FORWARD_SPEED);
+        robot.backRightDrive.setPower(-FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < t)) {
+            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+    }
+
+    public void robotRotateLeft(double t, double speed){ //t is in sec.
+        FORWARD_SPEED = speed;
+        robot.frontLeftDrive.setPower(-FORWARD_SPEED);
+        robot.backLeftDrive.setPower(-FORWARD_SPEED);
+        robot.frontRightDrive.setPower(FORWARD_SPEED);
+        robot.backRightDrive.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < t)) {
+            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+    }
+
 }
