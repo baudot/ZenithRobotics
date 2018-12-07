@@ -49,7 +49,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Zenith: Teleop POV", group="Zenith")
-public class ZenithTeleopPOV_Linear extends LinearOpMode {
+public class  ZenithTeleopPOV_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareZenith robot           = new HardwareZenith();   // Use a Pushbot's hardware
