@@ -126,7 +126,7 @@ public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
         sleep(1000);
 
         //Stop the detector:
-        //aDetector.disable();
+            //aDetector.disable();
     }
 
 
