@@ -11,10 +11,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
-
 @Autonomous(name="ZenithHardAutonomous_V1", group="Zenith")
 public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
-
     /* Declare OpMode members. */
     HardwareZenith          robot   = new HardwareZenith();   // Use a Pushbot's hardware
     private ElapsedTime     runtime = new ElapsedTime();
@@ -69,12 +67,15 @@ public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
         waitForStart();
 
 ///////////////// Autonomous Mode Code /////////// Don't Touch Stuff Above /////////////////////////////////////
+        //Drop down
+        robot.dropServo.setPosition(1);
+
         //Moves forwards
         this.robotForwards(0.5, 0.4);
         this.robotHardStop();
 
         //Rotates to the left
-        FORWARD_SPEED = 0.50;
+        FORWARD_SPEED = 0.8;
         robot.frontLeftDrive.setPower(-FORWARD_SPEED);
         robot.backLeftDrive.setPower(-FORWARD_SPEED);
         robot.frontRightDrive.setPower(FORWARD_SPEED);
@@ -99,7 +100,7 @@ public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
 
         //Rotate Right until cube is aligned
         while(!aDetector.getAligned()){ //while(aDetector.getXPosition() != 175){
-            FORWARD_SPEED = 0.2;
+            FORWARD_SPEED = 0.55;
             robot.frontLeftDrive.setPower(FORWARD_SPEED);
             robot.backLeftDrive.setPower(FORWARD_SPEED);
             robot.frontRightDrive.setPower(-FORWARD_SPEED);
@@ -109,7 +110,7 @@ public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
 
         //Move towards the cube
         if (aDetector.getAligned()){ //if (aDetector.getXPosition() == 175){
-            robotForwards(1.5, 0.25);
+            robotForwards(3, 0.25);
             robotHardStop();
         }
 
