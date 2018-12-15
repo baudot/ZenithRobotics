@@ -65,18 +65,18 @@ public class ZenithHardCodingAutonomous2 extends LinearOpMode{ //LinearOpMode
 
 ///////////////// Autonomous Mode Code /////////// Don't Touch Stuff Above /////////////////////////////////////
         //Drop down
-        robot.dropServo.setPosition(1);
-
+        robot.dropServo.setPosition(0);
+        sleep(2500);
         //Moves forwards
         this.robotForwards(0.5, 0.4);
         this.robotHardStop();
 
         //Rotates to the left
-        FORWARD_SPEED = 0.8;
+        FORWARD_SPEED = 0.5;
         robot.backLeftDrive.setPower(-FORWARD_SPEED);
         robot.backRightDrive.setPower(FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+        while (opModeIsActive() && (runtime.seconds() < 0.7)) {
             telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -93,15 +93,17 @@ public class ZenithHardCodingAutonomous2 extends LinearOpMode{ //LinearOpMode
 
         //Rotate Right until cube is aligned
         while(!aDetector.getAligned()){ //while(aDetector.getXPosition() != 175){
-            FORWARD_SPEED = 0.55;
+            FORWARD_SPEED = 0.25;
             robot.backLeftDrive.setPower(FORWARD_SPEED);
             robot.backRightDrive.setPower(-FORWARD_SPEED);
             //runtime.reset();
         }
+        //Rotate left a little more to offset the position being slightly off
+        this.robotRotateLeft(0.05,0.1);
 
         //Move towards the cube
         if (aDetector.getAligned()){ //if (aDetector.getXPosition() == 175){
-            robotForwards(3, 0.25);
+            robotForwards(6, 0.3);
             robotHardStop();
         }
 

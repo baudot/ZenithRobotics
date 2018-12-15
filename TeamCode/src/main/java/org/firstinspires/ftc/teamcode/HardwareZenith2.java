@@ -47,7 +47,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  * Motor channel:  Left  drive motor:        "left_drive"
  * Motor channel:  Right drive motor:        "right_drive"
- * Motor channel:  Manipulator drive motor:  "left_arm"
  * Servo channel:  Servo to open left claw:  "left_hand"
  * Servo channel:  Servo to open right claw: "right_hand"
  */
@@ -56,14 +55,10 @@ public class HardwareZenith2
     /* Public OpMode members. */
     public DcMotor backLeftDrive = null;
     public DcMotor backRightDrive = null;
-    public DcMotor arm = null;
-    public DcMotor elbow = null;
-    public CRServo spinner = null;
+    public DcMotor spinCollection = null;
     public Servo dropServo = null;
 
     public static final double MID_SERVO       =  0.5 ;
-    public static final double ARM_UP_POWER    =  0.45 ;
-    public static final double ARM_DOWN_POWER  = -0.45 ;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -82,26 +77,20 @@ public class HardwareZenith2
         // Define and Initialize Motors
         backLeftDrive = hwMap.get(DcMotor.class, "backLeftDrive");
         backRightDrive = hwMap.get(DcMotor.class, "backRightDrive");
-        arm = hwMap.get(DcMotor.class, "arm");
-        elbow = hwMap.get(DcMotor.class, "elbow");
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-        arm.setDirection(DcMotor.Direction.FORWARD);
-
+        spinCollection = hwMap.get(DcMotor.class, "spinCollection");
+        backLeftDrive.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
         // Set all motors to zero power
         backLeftDrive.setPower(0);
         backRightDrive.setPower(0);
-        arm.setPower(0);
-        elbow.setPower(0);
-
+        spinCollection.setPower(0);
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        spinCollection.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Define and initialize ALL installed servos.
-        spinner  = hwMap.get(CRServo.class, "spinner");
         dropServo  = hwMap.get(Servo.class, "dropServo");
         //leftClaw.setPosition(MID_SERVO);
     }

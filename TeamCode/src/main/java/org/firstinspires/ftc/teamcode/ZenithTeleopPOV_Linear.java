@@ -48,15 +48,12 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Zenith: Teleop POV", group="Zenith")
+@TeleOp(name="Zenith: Teleop POV", group="Zenith2")
 public class  ZenithTeleopPOV_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
-    HardwareZenith robot           = new HardwareZenith();   // Use a Pushbot's hardware
+    HardwareZenith2 robot           = new HardwareZenith2();   // Use a Pushbot's hardware
                                                                // could also use HardwarePushbotMatrix class.
-    //double armOffset = 0;                       // Servo mid position
-    //final double ARM_SPEED = 0.02 ;                   // sets rate to move servo
-
     @Override
     public void runOpMode() {
         double left;
@@ -64,12 +61,6 @@ public class  ZenithTeleopPOV_Linear extends LinearOpMode {
         double drive;
         double turn;
         double max;
-        double armMove;
-        double elbowMove;
-        boolean armReading;
-        /* Initialize the hardware variables.
-         * The init() method of the hardware class does all the work here
-         */
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
@@ -87,10 +78,6 @@ public class  ZenithTeleopPOV_Linear extends LinearOpMode {
             // This way it's also easy to just drive straight, or just turn.
             drive = -gamepad1.left_stick_y;
             turn  =  gamepad1.left_stick_x;
-            armMove = gamepad1.right_stick_x/1.2;
-            elbowMove = gamepad1.right_stick_y;
-            armReading = gamepad1.left_bumper;
-
             // Combine drive and turn for blended motion.
             left  = drive + turn;
             right = drive - turn;
@@ -101,32 +88,31 @@ public class  ZenithTeleopPOV_Linear extends LinearOpMode {
             {
                 left /= max;
                 right /= max;
-                armMove /= max;
-                elbowMove /= max;
             }
             // Output the safe vales to the motor drives.
-            if(gamepad1.a)
-                robot.arm.setPower(0.8);
-            robot.frontLeftDrive.setPower(left);
-            robot.frontRightDrive.setPower(right);
             robot.backLeftDrive.setPower(left);
             robot.backRightDrive.setPower(right);
-            robot.arm.setPower(armMove);
-            robot.elbow.setPower(elbowMove);
-            robot.spinner.setPower(1.0);
            //TURBO MODE! Moves forward at full power while b is pressed
-            while(gamepad1.b)
+
+            if(gamepad1.left_bumper)
+                robot.spinCollection.setPower(0.5);
+            else if(gamepad1.right_bumper)
+                robot.spinCollection.setPower(-1);
+            else
+                robot.spinCollection.setPower(0);
+
+            if(gamepad1.b) {
                 robot.backLeftDrive.setPower(1);
                 robot.backRightDrive.setPower(1);
-            while(gamepad1.x)
+            }
+            else if(gamepad1.x) {
                 robot.backLeftDrive.setPower(-1);
                 robot.backRightDrive.setPower(-1);
-            // Use gamepad left & right Bumpers to open and close the claw
-           /* if (gamepad1.right_bumper)
-                armOffset += ARM_SPEED;
-            else if (gamepad1.left_bumper)
-                armOffset -= ARM_SPEED;
-            */
+            }
+            else{
+                robot.backLeftDrive.setPower(left);
+                robot.backRightDrive.setPower(right);
+            }
             // Move both servos to new position.  Assume servos are mirror image of each other.
             //armOffset = Range.clip(armOffset, -0.5, 0.5);
             //robot.arm.setPosition(robot.MID_SERVO + armOffset);
