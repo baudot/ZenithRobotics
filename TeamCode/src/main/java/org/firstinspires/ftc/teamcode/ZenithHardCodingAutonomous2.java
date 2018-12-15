@@ -5,17 +5,13 @@ import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
-
-@Autonomous(name="ZenithHardAutonomous_V1", group="Zenith")
-@Disabled
-public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
+@Autonomous(name="ZenithHardAutonomous_V2", group="Zenith")
+public class ZenithHardCodingAutonomous2 extends LinearOpMode{ //LinearOpMode
     /* Declare OpMode members. */
-    HardwareZenith          robot   = new HardwareZenith();   // Use a Pushbot's hardware
+    HardwareZenith2          robot   = new HardwareZenith2();   // Use a Pushbot's hardware
     private ElapsedTime     runtime = new ElapsedTime();
 
     static double     FORWARD_SPEED = 0.2; //initial speeds.
@@ -77,9 +73,7 @@ public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
 
         //Rotates to the left
         FORWARD_SPEED = 0.8;
-        robot.frontLeftDrive.setPower(-FORWARD_SPEED);
         robot.backLeftDrive.setPower(-FORWARD_SPEED);
-        robot.frontRightDrive.setPower(FORWARD_SPEED);
         robot.backRightDrive.setPower(FORWARD_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 0.5)) {
@@ -89,9 +83,7 @@ public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
 
         //Pause briefly --- this might solve the error ---  NEW CODE!!!
         FORWARD_SPEED = 0.0;
-        robot.frontLeftDrive.setPower(-FORWARD_SPEED);
         robot.backLeftDrive.setPower(-FORWARD_SPEED);
-        robot.frontRightDrive.setPower(FORWARD_SPEED);
         robot.backRightDrive.setPower(FORWARD_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 0.5)) {
@@ -102,9 +94,7 @@ public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
         //Rotate Right until cube is aligned
         while(!aDetector.getAligned()){ //while(aDetector.getXPosition() != 175){
             FORWARD_SPEED = 0.55;
-            robot.frontLeftDrive.setPower(FORWARD_SPEED);
             robot.backLeftDrive.setPower(FORWARD_SPEED);
-            robot.frontRightDrive.setPower(-FORWARD_SPEED);
             robot.backRightDrive.setPower(-FORWARD_SPEED);
             //runtime.reset();
         }
@@ -134,42 +124,32 @@ public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
 
     public void robotForwards(double t, double speed){ //t is in sec.
         FORWARD_SPEED = speed;
-        robot.frontLeftDrive.setPower(FORWARD_SPEED);
         robot.backLeftDrive.setPower(FORWARD_SPEED);
-        robot.frontRightDrive.setPower(FORWARD_SPEED);
         robot.backRightDrive.setPower(FORWARD_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < t)) {
             telemetry.addData("Path", "Driving to Crater: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-        robot.frontLeftDrive.setPower(0.0);
         robot.backLeftDrive.setPower(0.0);
-        robot.frontRightDrive.setPower(0.0);
         robot.backRightDrive.setPower(0.0);
     }
 
     public void robotHardStop(){
-        robot.frontLeftDrive.setPower(-0.1);
         robot.backLeftDrive.setPower(-0.1);
-        robot.frontRightDrive.setPower(-0.1);
         robot.backRightDrive.setPower(-0.1);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 0.1)) {
             telemetry.addData("Path", "Driving to Crater: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-        robot.frontLeftDrive.setPower(0.0);
         robot.backLeftDrive.setPower(0.0);
-        robot.frontRightDrive.setPower(0.0);
         robot.backRightDrive.setPower(0.0);
     }
 
     public void robotReverse(double t, double speed){ //t is in sec.
         FORWARD_SPEED = speed;
-        robot.frontLeftDrive.setPower(-FORWARD_SPEED);
         robot.backLeftDrive.setPower(-FORWARD_SPEED);
-        robot.frontRightDrive.setPower(-FORWARD_SPEED);
         robot.backRightDrive.setPower(-FORWARD_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < t)) {
@@ -180,9 +160,7 @@ public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
 
     public void robotRotateRight(double t, double speed){ //t is in sec.
         FORWARD_SPEED = speed;
-        robot.frontLeftDrive.setPower(FORWARD_SPEED);
         robot.backLeftDrive.setPower(FORWARD_SPEED);
-        robot.frontRightDrive.setPower(-FORWARD_SPEED);
         robot.backRightDrive.setPower(-FORWARD_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < t)) {
@@ -193,9 +171,7 @@ public class ZenithHardCodingAutonomous extends LinearOpMode{ //LinearOpMode
 
     public void robotRotateLeft(double t, double speed){ //t is in sec.
         FORWARD_SPEED = speed;
-        robot.frontLeftDrive.setPower(-FORWARD_SPEED);
         robot.backLeftDrive.setPower(-FORWARD_SPEED);
-        robot.frontRightDrive.setPower(FORWARD_SPEED);
         robot.backRightDrive.setPower(FORWARD_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < t)) {
