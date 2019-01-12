@@ -76,6 +76,8 @@ public class  ZenithTeleopPOV_Linear extends LinearOpMode {
             // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
+            drive = 0; turn=0;
+
             drive = -gamepad1.left_stick_y;
             turn  =  gamepad1.left_stick_x;
             // Combine drive and turn for blended motion.
@@ -89,10 +91,9 @@ public class  ZenithTeleopPOV_Linear extends LinearOpMode {
                 left /= max;
                 right /= max;
             }
-            // Output the safe vales to the motor drives.
+
             robot.backLeftDrive.setPower(left);
             robot.backRightDrive.setPower(right);
-           //TURBO MODE! Moves forward at full power while b is pressed
 
             if(gamepad1.left_bumper)
                 robot.spinCollection.setPower(0.5);
@@ -101,24 +102,7 @@ public class  ZenithTeleopPOV_Linear extends LinearOpMode {
             else
                 robot.spinCollection.setPower(0);
 
-            if(gamepad1.b) {
-                robot.backLeftDrive.setPower(1);
-                robot.backRightDrive.setPower(1);
-            }
-            else if(gamepad1.x) {
-                robot.backLeftDrive.setPower(-1);
-                robot.backRightDrive.setPower(-1);
-            }
-            else{
-                robot.backLeftDrive.setPower(left);
-                robot.backRightDrive.setPower(right);
-            }
-            // Move both servos to new position.  Assume servos are mirror image of each other.
-            //armOffset = Range.clip(armOffset, -0.5, 0.5);
-            //robot.arm.setPosition(robot.MID_SERVO + armOffset);
-
             // Send telemetry message to signify robot running;
-            //telemetry.addData("claw",  "Offset = %.2f", armOffset);
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
             telemetry.update();
@@ -126,8 +110,5 @@ public class  ZenithTeleopPOV_Linear extends LinearOpMode {
             // Pace this loop so jaw action is reasonable speed.
             sleep(50);
         }
-    }
-    public void armEncoder(){
-
     }
 }

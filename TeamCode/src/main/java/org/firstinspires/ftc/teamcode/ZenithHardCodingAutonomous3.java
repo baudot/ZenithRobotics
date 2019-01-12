@@ -1,19 +1,25 @@
-
+//package org.firstinspires.ftc.robotcontroller.external.samples;
 package org.firstinspires.ftc.teamcode;
 
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
-@Autonomous(name="ZenithHardAutonomous_V2", group="Zenith")
-@Disabled
-public class ZenithHardCodingAutonomous2 extends LinearOpMode{ //LinearOpMode
+@Autonomous(name="ZenithHardAutonomous_V3", group="Zenith")
+public class ZenithHardCodingAutonomous3 extends LinearOpMode{ //LinearOpMode
     /* Declare OpMode members. */
     HardwareZenith2          robot   = new HardwareZenith2();   // Use a Pushbot's hardware
+    ModernRoboticsI2cGyro   gyro    = null;
     private ElapsedTime     runtime = new ElapsedTime();
 
     static double     FORWARD_SPEED = 0.2; //initial speeds.
@@ -25,7 +31,18 @@ public class ZenithHardCodingAutonomous2 extends LinearOpMode{ //LinearOpMode
 
     @Override
     public void runOpMode() {
+        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");
+        gyro.calibrate();
 
+        // make sure the gyro is calibrated before continuing
+        while (!isStopRequested() && gyro.isCalibrating())  {
+            sleep(50);
+            idle();
+        }
+        //sets z value of rotation to 0
+        gyro.resetZAxisIntegrator();
+        float zval = gyro.getZAxisOffset();
+        telemetry.addData("zval" + zval, zval);
         /////////////////////////
         telemetry.addData("Status", "DogeCV 2018.0 - Gold Align Example");
 
@@ -103,7 +120,6 @@ public class ZenithHardCodingAutonomous2 extends LinearOpMode{ //LinearOpMode
         }
         //Rotate left a little more to offset the position being slightly off
         this.robotRotateLeft(0.05,0.1);
-
         //Move towards the cube
         if (aDetector.getAligned()){ //if (aDetector.getXPosition() == 175){
             robotForwards(6, 0.3);
@@ -119,6 +135,7 @@ public class ZenithHardCodingAutonomous2 extends LinearOpMode{ //LinearOpMode
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         telemetry.addData("Path", "Complete");
+        telemetry.addData("zval" + zval, zval);
         telemetry.update();
         sleep(1000);
 
