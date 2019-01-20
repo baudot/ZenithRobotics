@@ -29,8 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -56,7 +59,10 @@ public class HardwareZenith2
     public DcMotor backLeftDrive = null;
     public DcMotor backRightDrive = null;
     public DcMotor spinCollection = null;
+    public DcMotor pullUp1 = null;
+    public DcMotor pullUp2 = null;
     public Servo dropServo = null;
+    public BNO055IMU imu = null;
 
     public static final double MID_SERVO       =  0.5 ;
 
@@ -73,23 +79,40 @@ public class HardwareZenith2
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         // Define and Initialize Motors
         backLeftDrive = hwMap.get(DcMotor.class, "backLeftDrive");
         backRightDrive = hwMap.get(DcMotor.class, "backRightDrive");
         spinCollection = hwMap.get(DcMotor.class, "spinCollection");
+        //pullUp1 = hwMap.get(DcMotor.class, "pullUp1");
+        //pullUp2 = hwMap.get(DcMotor.class, "pullUp2");
+        imu = hwMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        //pullUp1.setDirection(DcMotor.Direction.REVERSE);
+        //pullUp2.setDirection(DcMotor.Direction.FORWARD);
         // Set all motors to zero power
         backLeftDrive.setPower(0);
         backRightDrive.setPower(0);
         spinCollection.setPower(0);
+        //pullUp1.setPower(0);
+        //pullUp2.setPower(0);
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         spinCollection.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //pullUp1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //pullUp2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Define and initialize ALL installed servos.
         dropServo  = hwMap.get(Servo.class, "dropServo");
         //leftClaw.setPosition(MID_SERVO);
